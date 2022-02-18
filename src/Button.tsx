@@ -1,16 +1,26 @@
-import React from "react";
+import React from 'react';
+import {FilterValuesType} from "./App";
 
-type propsType={
-    callBack:()=>void
-    name: string
+type ButtonPropsType = {
+    active: boolean
+    title: string
+    onClickHandler: () => void
 }
 
-
-export const Button=(props: propsType)=>{
-    const onClickHandler=()=>{
-        props.callBack()
+const Button: React.FC<ButtonPropsType> = (
+    {
+        title,
+        onClickHandler,
+        active,
     }
-    return(
-        <button onClick={onClickHandler}>{props.name}</button>
+) => {
+    return (
+        <button
+            className={active ? "active" : ""}
+            onClick={onClickHandler}>
+            {title}
+        </button>
     )
-}
+};
+
+export default Button;

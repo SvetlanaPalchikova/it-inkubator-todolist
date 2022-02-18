@@ -1,29 +1,50 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, FC, KeyboardEvent, useState} from 'react';
+import {TextField} from "@material-ui/core";
 
-
-type propsType={
-title: string
-    callBack:(title:string)=>void
+type EditableSpanPropsType = {
+    title: string
+    changeTitle: (newTitle: string) => void
 }
 
-export const EditableSpan = (props: propsType) => {
-    const[title, setTitle]=useState(props.title)
-    const[edit, setEdit]=useState(false)
-    const onDoubleClickHandler=()=>{
-        setEdit(true)
+const EditableSpan: FC<EditableSpanPropsType> = (
+    {
+        title,
+        changeTitle
     }
-    const onBlurHandler=()=>{
-        setEdit(false)
-        props.callBack(title)
-    }
-    const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        setTitle(e.currentTarget.value)
-    }
-    return (
-        edit
-            ?<input value={title} autoFocus={true} onBlur={onBlurHandler} onChange={onChangeHandler}/>
-            :<span onDoubleClick={onDoubleClickHandler}>{props.title}</span>
+) => {
+    const [newTitle, setNewTitle] = useState<string>(title)
+    const [editMode, setEditMode] = useState<boolean>(false)
 
+    const onChangeSetUserText = (e: ChangeEvent<HTMLInputElement>) => {
+        setNewTitle(e.currentTarget.value)
+    }
+    const onEditMode = () => {
+        setEditMode(true)
+    }
+    const offEditMode = () => {
+        setEditMode(false)
+        changeTitle(newTitle)
+    }
+    const onKeyPressOffEditMode = (e: KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && offEditMode()
+
+    return (
+        editMode
+            ?<TextField
+                autoFocus={true}
+                value={newTitle}
+                onChange={onChangeSetUserText}
+                onBlur={offEditMode}
+                onKeyPress={onKeyPressOffEditMode}
+            />
+            // ? <input
+            //     autoFocus={true}
+            //     value={newTitle}
+            //     onChange={onChangeSetUserText}
+            //     onBlur={offEditMode}
+            //     onKeyPress={onKeyPressOffEditMode}
+            // />
+            : <span onDoubleClick={onEditMode}>{title}</span>
     );
 };
 
+export default EditableSpan;
